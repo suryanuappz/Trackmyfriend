@@ -40,18 +40,14 @@
 				$this->response('',404);				// If the method not exist with in this class, response would be "Page not found".
 		}
 		
-		/* 
-		 *	Simple login API
-		 *  Login must be POST method
-		 *  email : <USER EMAIL>
-		 *  pwd : <USER PASSWORD>
-		 */
+		
 		
 				
 		private function users(){	
 			// Cross validation if the request method is GET else it will return "Not Acceptable" status
 			
 			if($this->get_request_method() != "GET"){
+				
 				$this->response('',406);
 			}
 		$sql = mysql_query("SELECT user_id, user_fullname, user_email FROM users  ", $this->db);
@@ -167,10 +163,65 @@ unlink($filename);
 			}
 			//success function used to what are the find end with success
 		
-	private function reportsuccess()
+	private function success()
 	{
-		
-	}
+				if($this->get_request_method() != "GET"){
+					if($this->get_request_method() != "PUT"){
+						if($this->get_request_method() != "POST"){
+						$sql = mysql_query("DELETE FROM users WHERE user_id=3", $this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+					
+				}
+				
+				
+				
+				$this->response($this->json($result), 200);
+				
+			}	
+						//echo "deletemethode";
+					}
+					else{
+						//thie else port for update the data for post data request methode
+						$oldname="jesmith";
+						$newname="surya";						
+					$sql = mysql_query("UPDATE users SET user_fullname =  'surya' WHERE user_fullname =  'jesmith'", $this->db);
+			
+					//echo "postmethode";
+						}}else{
+							//thie else port for insert the data for put data request methode
+							$name="rr";
+							$mail="rr@ff.ion";
+							$status=1;
+							$pass="dd";
+							//put methode for insert  the data
+							$sql = mysql_query("INSERT INTO `testphp`.`users` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_status`) VALUES (NULL, '$name', '$mail', MD5('$pass'), '$status');", $this->db);
+			
+						
+							//echo "putmethode";
+							}
+					}
+					else{
+						//select the value from the database using get methode 
+						 $sql = mysql_query("SELECT user_id, user_fullname, user_email FROM users ", $this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+					
+				}
+				
+				
+				
+				$this->response($this->json($result), 200);
+				
+			}
+					//echo "getmethode";
+					}
+					}
+					
 	private function reportfail()
 	{
 		
