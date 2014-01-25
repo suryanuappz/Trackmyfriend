@@ -1,4 +1,9 @@
 <?php
+/*devleoper:surya
+company:NUAPPZ.com
+this index.php have client process of restful webservices of php
+main aim to develop the code for to create a admin page for TRACK FRIEND APPLICATION
+BULIDING WITH ANGULAR JS AND PHP RESTFUL WEBSERVICES*/
     
 	require_once("Rest.inc.php");
 	
@@ -39,144 +44,105 @@
 			else
 				$this->response('',404);				// If the method not exist with in this class, response would be "Page not found".
 		}
-		
-		
-		
-				
-		
-		
-		
-		
 		private function download(){//this code for download the code in csv format
-			$table = 'users';
-$filename = tempnam(sys_get_temp_dir(), "csv");
-$conn = mysql_connect("localhost", "root", "");
-mysql_select_db("testphp",$conn);
-$file = fopen($filename,"w");
-// Write column names
-$result = mysql_query("show columns from $table",$conn);
-for ($i = 0; $i < mysql_num_rows($result); $i++) {
-    $colArray[$i] = mysql_fetch_assoc($result);
-    $fieldArray[$i] = $colArray[$i]['Field'];
-}
-fputcsv($file,$fieldArray);
-// Write data rows
-$result = mysql_query("select * from $table",$conn);
-for ($i = 0; $i < mysql_num_rows($result); $i++) {
-    $dataArray[$i] = mysql_fetch_assoc($result);
-}
-foreach ($dataArray as $line) {
-    fputcsv($file,$line);
-}
-
-fclose($file);
-
-header("Content-Type: application/csv");
-header("Content-Disposition: attachment;Filename=users.csv");
-
-// send file to browser
-readfile($filename);
-unlink($filename);
-}
-		private function active()
-		{
+			$table = 'sample_login';
+			$filename = tempnam(sys_get_temp_dir(), "csv");
+			$conn = mysql_connect("localhost", "root", "");
+			mysql_select_db("testphp",$conn);
+			$file = fopen($filename,"w");
+			// Write column names
+			$result = mysql_query("show columns from $table",$conn);
+			for ($i = 0; $i < mysql_num_rows($result); $i++) {
+    		$colArray[$i] = mysql_fetch_assoc($result);
+    		$fieldArray[$i] = $colArray[$i]['Field'];
+			}
+			fputcsv($file,$fieldArray);
+			// Write data rows
+			$result = mysql_query("select * from $table",$conn);
+			for ($i = 0; $i < mysql_num_rows($result); $i++) {
+    		$dataArray[$i] = mysql_fetch_assoc($result);
+			}
+			foreach ($dataArray as $line) {
+    		fputcsv($file,$line);
+			}
+			fclose($file);
+			header("Content-Type: application/csv");
+			header("Content-Disposition: attachment;Filename=users.csv");
+			// send file to browser
+			readfile($filename);
+			unlink($filename);
+			}
+		private function active(){
 			if($this->get_request_method() != "GET"){
 				$this->response('',406);
 			}
-		$sql = mysql_query("SELECT user_id, user_fullname, user_email FROM users WHERE user_status=1", $this->db);
+			$sql = mysql_query("SELECT name, phone_no FROM sample_login WHERE login_status=true", $this->db);
 			if(mysql_num_rows($sql) > 0){
-				$result = array();
-				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-					$result[] = $rlt;
-					
+			$result = array();
+			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+			$result[] = $rlt;
+			}	
+			// If success everythig is good send header as "OK" and return list of users in JSON format
+			$this->response($this->json($result), 200);
 				}
-				
-				
-				// If success everythig is good send header as "OK" and return list of users in JSON format
-				$this->response($this->json($result), 200);
-				
-			}
 			$this->response('',204);
-			
-		}
-		//the newuserclassused to find what are the new user registed in this curresponding month
-		private function findnew()
-		{
+			}
+			//the newuserclassused to find what are the new user registed in this curresponding month
+		private function findnew(){
 			if($this->get_request_method() != "GET"){
 				$this->response('',406);
 			}
 			$startdate=2014-01-01;
 			$enddate="2014-01-22";
-		$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
+			$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
 				// If success everythig is good send header as "OK" and return list of users in JSON format
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 			}
-			private function newuseryearly()
-			{
-			
-				if($this->get_request_method() != "GET"){
+		private function newuseryearly(){
+			if($this->get_request_method() != "GET"){
 				$this->response('',406);
-			}
+				}
 			$year="2014";
 			$startdate=2014-01-01;
 			$enddate="2014-01-22";
-		$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
+			$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
-				$this->response($this->json($result), 200);
-				
-			}
+				$this->response($this->json($result), 200);		
+				}
 			$this->response('',204);
-
 			}
-			private function permonth()
-			{
-				$year="2014";
-				$month="02";
-				switch($month)
-				{ 
+		private function permonth(){
+			$year="2014";
+			$month="02";
+			switch($month){ 
 				case "01":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-31";	
-					//echo $startdate;
-					//echo "<br>";
-					//echo $enddate;
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
-			$this->response('',204);
-					
+				}
+				$this->response('',204);
 					break;
 				case "02":
-				          $leepyear=$year % 4;
-						  if($leepyear == 0)
-						  {
-							  $startdate=$year."-".$month."-01";
+				  $leepyear=$year % 4;
+				  if($leepyear == 0){
+					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-29";
 						
 							  $sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
@@ -185,37 +151,24 @@ unlink($filename);
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
-							  //echo "leep";
-						  }
-						  else
-						  {
-							$startdate=$year."-".$month."-01";
-					$enddate=$year."-".$month."-28";
-						
-							  $sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
+				}
+				else{
+				$startdate=$year."-".$month."-01";
+				$enddate=$year."-".$month."-28";
+				$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
-							  
-						  }
-					
-					break;
+				}
+				break;
 					case "03":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-31";	
@@ -224,68 +177,49 @@ unlink($filename);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-					$result[] = $rlt;
+				$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "04":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-30";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "05":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-31";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "06":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-30";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
-				$this->response($this->json($result), 200);
-				
-			}
+			$this->response($this->json($result), 200);
+				}
 			$this->response('',204);
 					break;
 					case "07":
@@ -298,84 +232,60 @@ unlink($filename);
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
-				$this->response($this->json($result), 200);
-				
-			}
+			$this->response($this->json($result), 200);
+				}
 			$this->response('',204);
 					break;
 					case "08":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-31";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "09":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-30";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "10":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-31";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "11":
 					$startdate=$year."-".$month."-01";
 					$enddate=$year."-".$month."-30";	
-					
 					$sql = mysql_query("SELECT *FROM `sample_login`WHERE date( created_on )BETWEEN '$startdate'AND '$enddate'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
 					case "12":
@@ -387,19 +297,12 @@ unlink($filename);
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
-				
 				$this->response($this->json($result), 200);
-				
-			}
+				}
 			$this->response('',204);
 					break;
-					
-				}
-				
-				
-			}
+					}
+					}
 			private function mostsharedlocation(){
 				//most shared location used for find wich place was mostly shared from users list
 				if($this->get_request_method() != "GET"){
@@ -412,17 +315,12 @@ unlink($filename);
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
 					$result[] = $rlt;
 				}
-				
-				
 				// If success everythig is good send header as "OK" and return list of users in JSON format
 				$this->response($this->json($result), 200);
-				
-			}
-			$this->response('',204);
-
-				
 				}
-				private function comparemonth()
+			$this->response('',204);
+				}
+		private function comparemonth()
 				{
 					$year="2014";
 					$startmonth="01";
@@ -505,6 +403,19 @@ unlink($filename);
 					
 				}
 				
+				private function param()
+				{
+					$id="";
+					if($id == NULL)
+					{
+						echo "null";
+					}
+					else
+					{
+						echo $id;
+					}
+				}
+					
 			
 			//users function used to what are the find end with users
 		
@@ -514,37 +425,18 @@ unlink($filename);
 				if($this->get_request_method() != "GET"){
 					if($this->get_request_method() != "PUT"){
 						if($this->get_request_method() != "POST"){
-							$id=7;
-						$sql = mysql_query("DELETE FROM users WHERE user_id=$id", $this->db);
-			
-				
-						//echo "deletemethode";
-					}
+							//$id=$_GET['id'];
+							$id=987456135225;
+						$sql = mysql_query("DELETE FROM sample_login WHERE phone_no=$id", $this->db)or die(mysql_error());
+						
+						}
 					else{
 						//thie else port for update the data for post data request methode
-						$oldname="jesmith";
-						$newname="surya";						
-					$sql = mysql_query("UPDATE users SET user_fullname =  '$newname WHERE user_fullname =  '$oldname'", $this->db);
+						$phonenum="9786445186";
+						$newname="pragash";						
+					$sql = mysql_query("UPDATE sample_login SET name =  '$newname' WHERE phone_no =  '$phonenum'", $this->db);
 			
-				
-			
-					//echo "postmethode";
-						}}else{
-							//thie else port for insert the data for put data request methode
-							$name="rr";
-							$mail="rr@ff.ion";
-							$status=1;
-							$pass="dd";
-							//put methode for insert  the data
-							$sql = mysql_query("INSERT INTO `testphp`.`users` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_status`) VALUES (NULL, '$name', '$mail', MD5('$pass'), '$status');", $this->db);
-			
-						
-							//echo "putmethode";
-							}
-					}
-					else{
-						//select the value from the database using get methode 
-						 $sql = mysql_query("SELECT user_id, user_fullname, user_email FROM users ", $this->db);
+				 $sql = mysql_query("SELECT * FROM `sample_login` WHERE phone_no = $phonenum ", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
@@ -557,7 +449,62 @@ unlink($filename);
 				$this->response($this->json($result), 200);
 				
 			}
-					//echo "getmethode";
+			
+					//echo "postmethode";
+						}}else{
+							//thie else port for insert the data for put data request methode
+							$name="raja";
+							$phonenumer="012233445566";
+							$pass="dd";
+							//put methode for insert  the data
+							$sql = mysql_query("INSERT INTO `testphp`.`sample_login` (`name`, `phone_no`, `pwd`, `register_status`, `created_on`, `u_id`, `login_status`) VALUES ('$name', '$phonenumer', MD5('$pass'), '1', CURRENT_TIMESTAMP, 'uido5', 'true');", $this->db);
+										 $sql = mysql_query("SELECT * FROM `sample_login` WHERE phone_no = $phonenumer", $this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+					
+				}
+				
+				
+				
+				$this->response($this->json($result), 200);
+				
+			}
+						
+							//echo "putmethode";
+							}
+					}
+					else{
+						//select the value from the database using get methode
+						$id=""; 
+						if($id ==NULL)
+						{
+					$sql = mysql_query("SELECT name, phone_no FROM sample_login ", $this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+					
+				}
+				$this->response($this->json($result), 200);
+				
+			}
+						}
+						else
+						{
+										 $sql = mysql_query("SELECT name, phone_no FROM sample_login WHERE phone_no=$id", $this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+					
+				}
+				$this->response($this->json($result), 200);
+				
+			}
+						}
+					
 					}
 					}
 					
